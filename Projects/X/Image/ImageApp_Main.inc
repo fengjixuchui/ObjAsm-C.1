@@ -10,7 +10,7 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW
 
-CStr szImagApp, "ImagApp"
+CStr szImagApp, "OAC_ImagApp"
 
 WM_APPSTR equ 0C000h
 
@@ -102,7 +102,7 @@ Method ImagApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax
@@ -128,7 +128,7 @@ Method ImagApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke GetClientRect, [xsi].hWnd, addr DstRect
   invoke DrawEdge, hDC, addr DstRect, EDGE_SUNKEN, BF_RECT
   
-  mov eax, [xsi].Img1.Dim.x
+  mov eax, [xsi].Img1.ImgSize.x
   mov ecx, DstRect.right
   mov DstRect.right, eax
   shr eax, 1
@@ -137,7 +137,7 @@ Method ImagApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   add ecx, 80
   mov DstRect.left, ecx
 
-  mov eax, [xsi].Img1.Dim.y
+  mov eax, [xsi].Img1.ImgSize.y
   mov ecx, DstRect.bottom
   mov DstRect.bottom, eax
   shr eax, 1
@@ -156,7 +156,7 @@ Method ImagApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov DstRect.right, eax
   mov DstRect.bottom, eax
   
-  OCall [xsi].Img2::Image.AlphaStretch, hDC, 255, addr DstRect, addr [xsi].Img2.Dim.Rect  
+  OCall [xsi].Img2::Image.AlphaStretch, hDC, 255, addr DstRect, addr [xsi].Img2.ImgSize.Rect  
 
 @@Exit:
   invoke EndPaint, [xsi].hWnd, addr PS

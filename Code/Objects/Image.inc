@@ -12,7 +12,12 @@
 ; Object:     Image
 ; Purpose:    This object is able to load BMP, GIF, JPEG, ICO, WMF, EMF, PNG, XBM, ICO, TIFF
 ;             images from files and resources.
-; Notes:      - % include &IncPath&Windows\IImgCtx.inc
+; Notes:      - Required files:
+;               % include &COMPath&COM.inc
+;               % include &IncPath&Windows\IImgCtx.inc
+;               % includelib &LibPath&Windows\Ole32.lib
+;             - Initialization:   invoke CoInitialize, 0
+;               Finalization:     invoke CoUninitialize
 ;             - This object is based on the ImgCtx functionality. There is very little information
 ;               about this interface on the net. The most important features about this interface,
 ;               is its ability to decode a wide range of file formats. The Load method accepts
@@ -33,7 +38,7 @@
 ;               are both NULL.
 ;             - Loading a resorce from the current file requires that the image resource is tagged
 ;               as resource 2110. Example:
-;                  MyPNG IMAGE DISCARDABLE "BMP\Spiderman.bmp"
+;                  MyBMP IMAGE DISCARDABLE "BMP\Spiderman.bmp"
 ;               where IMAGE = 2110.
 ;             - The second argument of IImgCtx.Load can be one of the following constants:
 ;                 DWN_COLORMODE    = Explicit color mode requested
@@ -43,9 +48,10 @@
 ;                 DWN_MIRRORIMAGE  = Mirror the image
 ;             - Do not try to use the StrechtBlt interface method. It is not implemented (2019).
 ;               It returns 0x80004002.
+;             - ImgCtx can only load an image once.
 
 
-ImgDim struct
+IMAGE_SIZE struct
   Union
     Rect RECT  {}
     struct
@@ -57,7 +63,7 @@ ImgDim struct
       ends
     ends
   ends
-ImgDim ends
+IMAGE_SIZE ends
 
 Object Image, ImageID, Primer
   RedefineMethod  Done                                  ;Must be first virtual method!
@@ -77,7 +83,7 @@ Object Image, ImageID, Primer
 
   DefineVariable  pIImgCtx,         POINTER,    NULL    ;-> IImgCtx interface
   DefineVariable  dState,           DWORD,      0
-  DefineVariable  Dim,              ImgDim,     {}
+  DefineVariable  ImgSize,          IMAGE_SIZE, {}
 ObjectEnd
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -116,9 +122,9 @@ Method Image.AlphaDraw, uses xsi, hDC:HDC, dSrcAlpha:DWORD, pDstRect:PRECT
   mov dReturn, -1
   .ifBitSet [xsi].dState, IMGLOAD_COMPLETE
     mov hTmpDC, $invoke(CreateCompatibleDC, hDC)
-    mov hTmpBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].Dim.x, [xsi].Dim.y)
+    mov hTmpBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].ImgSize.x, [xsi].ImgSize.y)
     mov hPrvBmp, $invoke(SelectObject, hTmpDC, hTmpBmp)
-    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].Dim.Rect
+    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].ImgSize.Rect
     .if SUCCEEDED(eax)
       mov bfn.BlendOp, AC_SRC_OVER
       mov bfn.BlendFlags, 0
@@ -128,7 +134,7 @@ Method Image.AlphaDraw, uses xsi, hDC:HDC, dSrcAlpha:DWORD, pDstRect:PRECT
       mov xax, pDstRect
       invoke AlphaBlend, hDC, [xax].RECT.left, [xax].RECT.top, \
                               [xax].RECT.right, [xax].RECT.bottom, \
-                         hTmpDC, 0, 0, [xsi].Dim.x, [xsi].Dim.y, bfn
+                         hTmpDC, 0, 0, [xsi].ImgSize.x, [xsi].ImgSize.y, bfn
       .if eax != FALSE
         mov dReturn, 0
       .endif
@@ -156,9 +162,9 @@ Method Image.AlphaStretch, uses xbx xsi, hDC:HDC, dSrcAlpha:DWORD, pDstRect:PREC
   mov dReturn, -1
   .ifBitSet [xsi].dState, IMGLOAD_COMPLETE
     mov hTmpDC, $invoke(CreateCompatibleDC, hDC)
-    mov hTmpBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].Dim.x, [xsi].Dim.y)
+    mov hTmpBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].ImgSize.x, [xsi].ImgSize.y)
     mov hPrvBmp, $invoke(SelectObject, hTmpDC, hTmpBmp)
-    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].Dim.Rect
+    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].ImgSize.Rect
     .if SUCCEEDED(eax)
       mov bfn.BlendOp, AC_SRC_OVER
       mov bfn.BlendFlags, 0
@@ -289,9 +295,9 @@ Method Image.GetCompatibleBmp, uses xsi, hDC:HDC
   SetObject xsi
   .ifBitSet [xsi].dState, IMGLOAD_COMPLETE
     mov hTmpDC, $invoke(CreateCompatibleDC, hDC)
-    mov hBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].Dim.x, [xsi].Dim.y)
+    mov hBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].ImgSize.x, [xsi].ImgSize.y)
     mov hPrvBmp, $invoke(SelectObject, hTmpDC, hBmp)
-    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].Dim.Rect
+    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].ImgSize.Rect
     .if !SUCCEEDED(eax)
       invoke DeleteObject, hBmp
       mov hBmp, 0
@@ -357,7 +363,7 @@ Method Image.LoadFromFileA, uses xsi, pFileNameA:PSTRINGA
     ICall [xsi].pIImgCtx::IImgCtx.Load, pFullfileNameW, DWN_COLORMODE
     .if SUCCEEDED(eax)
       .repeat
-        ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].Dim.x, FALSE
+        ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].ImgSize.x, FALSE
         mov ecx, [xsi].dState
         .ifBitClr ecx, IMGLOAD_LOADING
           .ifBitClr ecx, IMGLOAD_NOTLOADED or IMGLOAD_STOPPED or IMGLOAD_ERROR
@@ -393,7 +399,7 @@ Method Image.LoadFromFileW, uses xsi, pFileNameW:PSTRINGW
     ICall [xsi].pIImgCtx::IImgCtx.Load, pFullfileNameW, DWN_COLORMODE
     .if SUCCEEDED(eax)
       .repeat
-        ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].Dim.x, FALSE
+        ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].ImgSize.x, FALSE
         mov ecx, [xsi].dState
         .ifBitClr ecx, IMGLOAD_LOADING
           .ifBitClr ecx, IMGLOAD_NOTLOADED or IMGLOAD_STOPPED or IMGLOAD_ERROR
@@ -425,7 +431,7 @@ Method Image.LoadFromResA, uses xbx xsi, pResNameA:PSTRINGA
     FillStringW wBuffer, <res://>
     lea xbx, wBuffer
     invoke GetModuleFileNameW, 0, addr [xbx + sizeof(CHRW)*6], sizeof(wBuffer) - sizeof(CHRW)*6
-    invoke StrCCatCharW, xbx, "/", sizeof(wBuffer)
+    invoke StrCCatCharW, xbx, "/", lengthof(wBuffer)
     invoke StrEndW, xbx
     lea xcx, [xbx + sizeof wBuffer]
     mov edx, dSize
@@ -436,7 +442,7 @@ Method Image.LoadFromResA, uses xbx xsi, pResNameA:PSTRINGA
       ICall [xsi].pIImgCtx::IImgCtx.Load, xbx, DWN_COLORMODE
       .if SUCCEEDED(eax)
         .repeat
-          ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].Dim.x, FALSE
+          ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].ImgSize.x, FALSE
           mov ecx, [xsi].dState
           .ifBitClr ecx, IMGLOAD_LOADING
             .ifBitClr ecx, IMGLOAD_NOTLOADED or IMGLOAD_STOPPED or IMGLOAD_ERROR
@@ -468,7 +474,7 @@ Method Image.LoadFromResW, uses xbx xsi, pResNameW:PSTRINGW
     FillStringW wBuffer, <res://>
     lea xbx, wBuffer
     invoke GetModuleFileNameW, 0, addr [xbx + sizeof(CHRW)*6], sizeof(wBuffer) - sizeof(CHRW)*6
-    invoke StrCCatCharW, xbx, "/", sizeof(wBuffer)
+    invoke StrCCatCharW, xbx, "/", lengthof(wBuffer)
     invoke StrEndW, xbx
     lea xcx, [xbx + sizeof wBuffer]
     mov edx, dSize
@@ -478,7 +484,7 @@ Method Image.LoadFromResW, uses xbx xsi, pResNameW:PSTRINGW
       ICall [xsi].pIImgCtx::IImgCtx.Load, xbx, DWN_COLORMODE
       .if SUCCEEDED(eax)
         .repeat
-          ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].Dim.x, FALSE
+          ICall [xsi].pIImgCtx::IImgCtx.GetStateInfo, addr [xsi].dState, addr [xsi].ImgSize.x, FALSE
           mov ecx, [xsi].dState
           .ifBitClr ecx, IMGLOAD_LOADING
             .ifBitClr ecx, IMGLOAD_NOTLOADED or IMGLOAD_STOPPED or IMGLOAD_ERROR
@@ -509,9 +515,9 @@ Method Image.Stretch, uses xbx xsi, hDC:HDC, pDstRect:PRECT, pSrcRect:PRECT
   mov dReturn, -1
   .ifBitSet [xsi].dState, IMGLOAD_COMPLETE
     mov hTmpDC, $invoke(CreateCompatibleDC, hDC)
-    mov hTmpBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].Dim.x, [xsi].Dim.y)
+    mov hTmpBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].ImgSize.x, [xsi].ImgSize.y)
     mov hPrvBmp, $invoke(SelectObject, hTmpDC, hTmpBmp)
-    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].Dim.Rect
+    ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].ImgSize.Rect
     .if SUCCEEDED(eax)
       mov dPrvStretchMode, $32($invoke(SetStretchBltMode, hDC, STRETCH_HALFTONE))
 

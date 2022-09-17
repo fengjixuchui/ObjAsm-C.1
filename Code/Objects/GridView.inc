@@ -11,7 +11,7 @@
 ; Design notes:
 
 
-CStr szGridViewClass, "GridViewClass", "&$ToStr(%TARGET_BITNESS)", "&TARGET_STR_AFFIX"
+CStr szGridViewClass, "OAC_GridView", "&$ToStr(%TARGET_BITNESS)", "&TARGET_STR_AFFIX"
 
 ;GridView Window Flag
 GVWF_RESOURCE      equ   BIT00
@@ -177,7 +177,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method GridView.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF_GRIDVIEW
-  DbgText "GridView.Init"
+;  DbgText "GridView.Init"
   SetObject xsi
   m2m [xsi].hParent, hParent, xax
   mov xbx, pDefStruc

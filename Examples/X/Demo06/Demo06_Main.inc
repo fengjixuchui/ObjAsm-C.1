@@ -104,8 +104,8 @@ ObjectEnd
 ;    Application implementation
 ; ==================================================================================================
 
-CStr szAppClassName,   "Application"
-CStr szChildClassName, "AppChild"
+CStr szAppClassName,   "OAC_Application"
+CStr szChildClassName, "OAC_Child"
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.ChangeLanguage
@@ -353,7 +353,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Messages for help menu
   .elseif ax == IDM_HELP_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax

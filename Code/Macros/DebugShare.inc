@@ -59,6 +59,7 @@ DBG_CMD_CLOSE_BMP     equ   4               ;Currently not implemented!
 DBG_CMD_CLOSE_ALL     equ   5               ;Currently not implemented!
 DBG_CMD_SINGLE_LINE   equ   6               ;char 2500 or 2014
 DBG_CMD_DOUBLE_LINE   equ   7               ;Char 2550
+Dbg_CMD_SET_BKGND     equ   8               ;Color in Param
 
 
 SMTO_TIMEOUT          equ   5000            ;Timeout of a WM_COPYDATA message
@@ -76,13 +77,6 @@ DBG_HEADER_INFO struc 1
 DBG_HEADER_INFO ends
 ;Source WIDE string & ZTC follow this structure
 
-DBG_CMD_INFO struc 1
-  bBlockID    BYTE    DBG_MSG_CMD
-  bInfo       BYTE    ?                     ;Used for single byte commands
-  dBlockLen   DWORD   ?                     ;Size of this structure + size of the data (may be zero)
-DBG_CMD_INFO ends
-;Data bytes may follow this structure
-
 DBG_STR_INFO struc 1
   bBlockID    BYTE    DBG_MSG_STR
   bInfo       BYTE    ?                     ;Not used
@@ -92,15 +86,25 @@ DBG_STR_INFO struc 1
 DBG_STR_INFO ends
 ;WIDE characters & ZTC (WIDE string) follow this structure
 
-DBG_BMP_INFO struc 1
-  bBlockID    BYTE    DBG_MSG_BMP
-  bInfo       BYTE    ?                     ;Not used
-  dBlockLen   DWORD   ?                     ;Size of this structure + size of bitmap data (RGBQUADs)
-  BmpHeader   BITMAPINFOHEADER  {}
-DBG_BMP_INFO ends
-;Bitmap data follow this structure
+if TARGET_PLATFORM eq PLATFORM_WINDOWS
+  DBG_CMD_INFO struc 1
+    bBlockID    BYTE    DBG_MSG_CMD
+    bInfo       BYTE    ?                   ;Used for single byte commands
+    dBlockLen   DWORD   ?                   ;Size of this structure + size of the data (may be zero)
+    dParam      DWORD   ?
+  DBG_CMD_INFO ends
+  ;Data bytes may follow this structure
+
+  DBG_BMP_INFO struc 1
+    bBlockID    BYTE    DBG_MSG_BMP
+    bInfo       BYTE    ?                   ;Not used
+    dBlockLen   DWORD   ?                   ;Size of this structure + size of bitmap data (RGBQUADs)
+    BmpHeader   BITMAPINFOHEADER  {}
+  DBG_BMP_INFO ends
+  ;Bitmap data follow this structure
+endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DEBUG_CENTER_CLASS  textequ  <"DebugCenter">
+DEBUG_CENTER_CLASS  textequ  <"OAC_DebugCenter">
 DEBUG_CENTER_REGKEY textequ  <"Software\DebugCenter">

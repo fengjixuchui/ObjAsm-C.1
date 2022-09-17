@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       2
-BUILD_DATE_STR                textequ   <2021-11-14>
+BUILD_NUMBER                  equ       10
+BUILD_DATE_STR                textequ   <2022-09-15>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       DBG
 
@@ -34,4 +34,8 @@ IDM_WEBCAM_DLG_SOURCE         equ       2006
 IDM_HELP_HELP                 equ       5001
 IDM_HELP_ABOUT                equ       5002
 
-IDC_TEXT_ABOUT                equ       100
+;Dialog About Control IDs
+IDC_DAB_ICON                  equ       100
+IDC_DAB_TEXT                  equ       101
+IDC_DAB_MAIL                  equ       102
+IDC_DAB_LINK                  equ       103

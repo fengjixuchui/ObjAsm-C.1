@@ -8,17 +8,17 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
-% include &ObjMemPath&ObjMem.cop
+% include &ObjMemPath&ObjMemWin.cop
+
 % include &IncPath&Windows\Psapi.inc
 
 .code
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  FindModuleByAddrA
 ; Purpose:    Find the module name from an address on a WinNT system.
 ; Arguments:  Arg1: Address.
 ;             Arg2: -> ANSI module name buffer.
-; Return:     eax = number of characters copied into the buffer.
+; Return:     eax = Number of characters copied into the buffer.
 
 align ALIGN_CODE
 FindModuleByAddrA proc uses rdi rsi rbx pAddress:POINTER, pModuleNameA:POINTER
@@ -34,7 +34,7 @@ FindModuleByAddrA proc uses rdi rsi rbx pAddress:POINTER, pModuleNameA:POINTER
   local cModName[MAX_PATH]:CHRA
 
   invoke GetModuleHandle, 0                             ;Important to ensure that
-  invoke LoadLibraryA, $OfsCStr("psapi.dll")            ;  LoadLibrary works well
+  invoke LoadLibraryA, $OfsCStrA("psapi.dll")           ;  LoadLibrary works well
   test rax, rax
   jnz @F
   ret

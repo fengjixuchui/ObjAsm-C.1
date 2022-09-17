@@ -8,7 +8,7 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
 
-CStr szNetComClient, "NetComClient"                     ;Creates szNetComClient string in .const
+CStr szNetComClient, "OAC_NetComClient"                 ;Creates szNetComClient string in .const
 
 Object SendDlg,, DialogModal
   RedefineMethod    CtlsGet
@@ -202,7 +202,7 @@ Method NetComClient.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof cBuffer
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax
@@ -242,6 +242,10 @@ Method NetComClient.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   SetObject xsi
   mov xbx, $invoke(GetDC, [xsi].hWnd)
+  invoke GetSysColor, COLOR_WINDOWTEXT
+  invoke SetTextColor, xbx, eax
+  invoke SetBkMode, xbx, TRANSPARENT
+
   lea xdi, cBuffer
 
   XPOS = 20

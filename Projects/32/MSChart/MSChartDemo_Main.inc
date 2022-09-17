@@ -269,7 +269,7 @@ Method MSChartDemoApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, NULL
     xor eax, eax
@@ -325,13 +325,13 @@ MethodEnd
 ; Return:     eax = nonzero if the background was erased, otherwise zero.
 
 Method MSChartDemoApp.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
-  local CR:RECT
+  local CRect:RECT
 
   SetObject xcx
   .if [xcx].Chart.dErrorCode != OBJ_OK
-    invoke GetClientRect, [xcx].hWnd, addr CR
+    invoke GetClientRect, [xcx].hWnd, addr CRect
     invoke GetStockObject, GRAY_BRUSH
-    invoke FillRect, wParam, addr CR, xax
+    invoke FillRect, wParam, addr CRect, xax
   .endif
   mov eax, TRUE
 MethodEnd

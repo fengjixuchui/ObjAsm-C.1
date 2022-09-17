@@ -8,27 +8,27 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
-% include &ObjMemPath&ObjMem.cop
+% include &ObjMemPath&ObjMemWin.cop
 
 externdef DbgCritSect:CRITICAL_SECTION
 
-.code
-
 option stackbase:rbp
 
+.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutCmd
 ; Purpose:    Send a command to a specific Debug window.
 ; Arguments:  Arg1: Command ID [BYTE].
-;             Arg2: Target Debug Window name.
+;             Arg2: Param (DWORD).
+;             Arg2: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
 align ALIGN_CODE
-DbgOutCmd proc FRAME uses rbx rdi bCommand:BYTE, pTargetWnd:POINTER
+DbgOutCmd proc FRAME uses rbx rdi bCommand:BYTE, dParam:DWORD, pTargetWnd:POINTER
   local CDS:COPYDATASTRUCT
 
   mov eax, dDbgDev
-  .if eax == DBG_DEV_WND
+  .if eax == DBG_DEV_WIN_DC
     .if $invoke(DbgWndOpen)
       mov CDS.dwData, DGB_MSG_ID                        ;Identify this message source
       .if pTargetWnd != NULL
@@ -56,6 +56,7 @@ DbgOutCmd proc FRAME uses rbx rdi bCommand:BYTE, pTargetWnd:POINTER
       mov [rdi].DBG_CMD_INFO.bBlockID, DBG_MSG_CMD
       m2m [rdi].DBG_CMD_INFO.bInfo, bCommand, al
       mov [rdi].DBG_CMD_INFO.dBlockLen, sizeof(DBG_CMD_INFO)
+      m2m [rdi].DBG_CMD_INFO.dParam, dParam, eax
       sub rsp, 38h                                      ;Reserve space for homing area and 3 params
       invoke SendMessageTimeoutW, hDbgDev, WM_COPYDATA, -1, addr CDS, \
                                   SMTO_BLOCK, SMTO_TIMEOUT, NULL

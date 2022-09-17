@@ -30,7 +30,7 @@ DplVector2      D3Vector      {  550.0,  250.0,  000.0}       ;Grey sphere initi
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CStr szApi3DEngApp, "Api3DEngApp"
+CStr szApi3DEngApp, "OAC_Api3DEngApp"
 
 Object Api3DEngApp, MySdiAppID, SdiApp                        ;SDI application.
   RedefineMethod    Done
@@ -227,7 +227,7 @@ Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   .if ax ==  IDM_HELP_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, NULL
     xor eax, eax

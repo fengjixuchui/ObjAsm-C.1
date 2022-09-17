@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,1,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.1>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       2
-BUILD_DATE_STR                textequ   <2021-11-21>
+BUILD_NUMBER                  equ       12
+BUILD_DATE_STR                textequ   <2022-09-15>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 
@@ -61,7 +61,11 @@ IDM_CHECK8                    equ       4107
 IDM_CHECK9                    equ       4108
 IDM_LIST_NDX                  equ       4109
 
-IDC_TEXT_ABOUT                equ       1001
+;Dialog About Control IDs
+IDC_DAB_ICON                  equ       100
+IDC_DAB_TEXT                  equ       101
+IDC_DAB_MAIL                  equ       102
+IDC_DAB_LINK                  equ       103
 
 ;Application
 IDC_APP_SBR                   equ       1000

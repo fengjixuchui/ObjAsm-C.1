@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-CStr szSplashDemo, "SplashDemo"                         ;Creates szSplashDemo string in .const
+CStr szSplashDemo, "OAC_SplashDemo"                     ;Creates szSplashDemo string in .const
 
 Object SplashDemo, MySdiAppID, SdiApp                   ;Single Document Interface App.
   RedefineMethod    Init                                ;Init method redefinition
@@ -73,7 +73,7 @@ Method SplashDemo.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, NULL
     xor eax, eax

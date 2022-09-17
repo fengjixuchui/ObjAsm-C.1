@@ -37,7 +37,7 @@ INFO_BUILD        equ   0
 INFO_UPDATE       equ   1
 
 LOGO_COLOR equ  <C#107CBE>
-LINK_COLOR equ  <C#0000EE>
+LINK_COLOR equ  <C@26>
 INFO_COLOR equ  LOGO_COLOR
 
 $Quoted macro Args:vararg
@@ -74,7 +74,7 @@ String szAboutMarkup, \
     "[FI 190]", \
       "[H+3,B]&ABOUT_TEXT{B}[~]", \
       "[I]Version &VER_PRODUCTVERSION_STR{P}[~]", \
-      "[C#3F3F3F]", \
+      "[C@17]", \
         "%s{B}", \
         "© &COPYRIGHT{P}", \
           $Quoted(BUILD_DATE_STR, <<  -  Build: >>, %BUILD_NUMBER, <->, \
@@ -199,7 +199,7 @@ Method DialogAbout.OnNotify, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
                              $OfsCStr("mailto:objasm@gmx.net"), \
                              NULL, NULL, SW_SHOW
       .elseif [xdi].TVNM_APP.dID == APP_HELP
-        invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+        invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                          addr cFileName, lengthof(cFileName)
         invoke PdfView, [xsi].hWnd, addr cFileName, $OfsCStr("Debugging")
       .endif

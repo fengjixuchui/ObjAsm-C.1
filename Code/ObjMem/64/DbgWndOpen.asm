@@ -8,10 +8,9 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
-% include &ObjMemPath&ObjMem.cop
+% include &ObjMemPath&ObjMemWin.cop
 
 .code
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgWndOpen
 ; Purpose:    Open a "Debug Center" instance.
@@ -21,7 +20,7 @@
 align ALIGN_CODE
 DbgWndOpen proc uses rbx
   local StartupInfo:STARTUPINFO, ProcessInforamtion:PROCESS_INFORMATION
-  local WP:WINDOWPLACEMENT, hKey: HKEY, dValueType:DWORD
+  local WP:WINDOWPLACEMENT, hKey:HKEY, dValueType:DWORD
   local dBufSize:DWORD, cBuffer[MAX_PATH]:CHRW
 
   .if hDbgDev == -1                                     ;Error condition?

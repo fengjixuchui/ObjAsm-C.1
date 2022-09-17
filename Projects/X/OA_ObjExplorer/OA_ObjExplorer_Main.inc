@@ -83,7 +83,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CStr cIntPropClass, "IntPropWndClass"
+CStr cIntPropClass, "OAC_IntPropWnd"                    ;Interface Property Window
 
 Object IntPropWnd, OAE_IntPropWndID, PropWnd
 ;  RedefineMethod    CreateMarkupText
@@ -99,9 +99,9 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CStr cObjPropClass, "ObjPropWndClass"
+CStr cObjPropClass, "OAC_ObjPropWnd"
 
-Object ObjPropWnd, OAE_ObjPropWndID, PropWnd
+Object ObjPropWnd, OAE_ObjPropWndID, PropWnd            ;Object property Window
   RedefineMethod    CreateMarkupText
   RedefineMethod    Done
   RedefineMethod    Init,               $ObjPtr(ClientWnd), PSTRING, POBJECTINFORMATION
@@ -145,7 +145,7 @@ ObjectEnd
 
 CloseEnumProc    proto :HANDLE, :LPARAM
 
-CStr cObjExplorerClass, "ObjExplorerClass"
+CStr cObjExplorerClass, "OAC_ObjExplorer"
 
 Object Application, OAE_ApplicationID, MdiApp           ;MDI application.
   VirtualMethod     ChangeBtnLanguage,  DWORD           ;IDLANG_XXX
@@ -746,7 +746,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof cBuffer
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax

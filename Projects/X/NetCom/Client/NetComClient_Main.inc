@@ -8,7 +8,7 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
 
-CStr szNetComClient, "NetComClient"                     ;Creates szNetComClient string in .const
+CStr szNetComClient, "OAC_NetComClient"                 ;Creates szNetComClient string in .const
 
 BUFFERSIZE  equ   2048
 
@@ -20,11 +20,11 @@ Object SendDlg,, DialogModal
   RedefineMethod    OnInitDialog,   WPARAM, LPARAM
   RedefineMethod    OnCommand,      WPARAM, LPARAM
 
-  DefineVariable    ServerAddr,     NETCOMADDR, {}    
+  DefineVariable    ServerAddr,     NETCOMADDR, {}
   DefineVariable    dRepetitions,   DWORD,      1
   DefineVariable    cText,          CHR,        BUFFERSIZE dup(0)
   DefineVariable    dConnections,   DWORD,      1
-  
+
   Embed   Connections,    Collection                    ;For simplicity in place of the linked list
 ObjectEnd
 
@@ -52,11 +52,11 @@ if IMPLEMENT
 
 .data
 
-bPayload db "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod ", 
+bPayload db "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod ",
             "tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At ",
             "vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, ",
             "no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit ",
-            "amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut ", 
+            "amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut ",
             "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam ",
             "et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata ",
             "sanctus est Lorem ipsum dolor sit amet."
@@ -109,7 +109,7 @@ Method NetComClient.Init, uses xsi
   OCall $ObjTmpl(NetComClientProtocol)::NetComClientProtocol.Init, xsi, $OfsCStr("25773")
 
   ;Set the transmitted text
-  lea xdx, [xsi].SndDlg 
+  lea xdx, [xsi].SndDlg
   invoke MemClone, addr [xdx].$Obj(SendDlg).cText, offset bPayload, sizeof bPayload
 
   ;For this test, we set the Server address (Remote Host) to the Local Host address.
@@ -165,7 +165,7 @@ Method NetComClient.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax
@@ -205,6 +205,10 @@ Method NetComClient.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   SetObject xsi
   mov xbx, $invoke(GetDC, [xsi].hWnd)
+  invoke GetSysColor, COLOR_WINDOWTEXT
+  invoke SetTextColor, xbx, eax
+  invoke SetBkMode, xbx, TRANSPARENT
+
   lea xdi, cBuffer
 
   XPOS = 20
@@ -310,7 +314,7 @@ Method SendDlg.CtlsGet, uses xsi
                    DWORD ptr [xax].ADDRINFOT.ai_addrlen
   invoke FreeAddrInfo, pResult
   invoke StrDispose, $ObjTmpl(NetComClientProtocol).pServiceName
-  mov $ObjTmpl(NetComClientProtocol).pServiceName, $invoke(StrNew, addr cServiceName) 
+  mov $ObjTmpl(NetComClientProtocol).pServiceName, $invoke(StrNew, addr cServiceName)
   mov [xsi].dConnections, $32($invoke(GetDlgItemInt, [xsi].hWnd, IDC_EDT_CONNECTIONS, NULL, FALSE))
   invoke GetDlgItemText, [xsi].hWnd, IDC_EDT_DATA, addr [xsi].cText, BUFFERSIZE
   mov [xsi].dRepetitions, $32($invoke(GetDlgItemInt, [xsi].hWnd, IDC_EDT_REPETITIONS, NULL, FALSE))

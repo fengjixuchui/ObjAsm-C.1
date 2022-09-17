@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=14
+MilestoneOnDateDate=28
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,8 +171,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,160
-1=0,0,0,0,175
+2=0,0,0,0,5178
+1=0,0,0,0,1033
 6=0,0,1456,414,126870
 4=0,0,0,0,225
 31=0,0,1213,691,1416
@@ -182,7 +182,7 @@ ProductVer4Range=0
 10=0,0,0,0,18138
 5=0,0,0,0,39755
 3=0,0,0,0,234
-11=0,0,1783,588,844
+11=0,0,1783,588,1333
 15=0,0,0,0,0
 14=0,0,0,0,5662
 13=0,0,0,0,7167
@@ -196,7 +196,7 @@ ProductVer4Range=0
 24=0,0,0,0,51703
 25=0,0,0,0,10692
 21=0,0,0,0,575
-22=0,0,0,0,8642
+22=0,0,0,0,20067
 26=
 27=
 
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="dPrvStretchMode"
-2="AlphaDraw"
-3="ifBitClr"
-4="DbgComError"
-5="Temp"
-6="Prev"
-7="DstRect"
-8="ImageApp"
-9=".ImgRect"
-10=".ImgRect.right"
+1="Dim"
+2="ImgDim"
+3="dPrvStretchMode"
+4="AlphaDraw"
+5="ifBitClr"
+6="DbgComError"
+7="Temp"
+8="Prev"
+9="DstRect"
+10="ImageApp"
 [Collapse]
 1=
 2=
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=,
 27=
 [AutoLoad]
-AutoLoad=1,2,4,24,3,11
+AutoLoad=1,2
 [PTimer]
-PTimer=1172735639
+PTimer=1173031624
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

@@ -38,8 +38,8 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
 
 SetupTabCtrl DEF_TABCONTROL {100, STSTYLE, 0, NULL, {<2,2,295,180>}}
 
-CStr szDemoChild10, "DemoChild10"
-CStr szDemoApp10,   "DemoApp10"
+CStr szDemoChild10, "OAC_Child"
+CStr szDemoApp10,   "OAC_Application"
 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -525,7 +525,7 @@ Method DemoApp10.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Messages for help menu
   .elseif ax == IDM_HELP_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax

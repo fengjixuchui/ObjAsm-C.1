@@ -39,8 +39,8 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SB_STYLE, 0, 4}
 
 CloseEnumProc    proto :HWND, :LPARAM
 
-CStr szApplication,   "Application"                     ;Used by Startup and Shutdown
-CStr szChildWnd,      "ChildWnd"                        ;Used by Startup and Shutdown
+CStr szApplication,   "OAC_Application"                 ;Used by Startup and Shutdown
+CStr szChildWnd,      "OAC_ChildWnd"                    ;Used by Startup and Shutdown
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -259,7 +259,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax

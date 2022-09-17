@@ -8,15 +8,14 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
-% include &ObjMemPath&ObjMem.cop
+% include &ObjMemPath&ObjMemWin.cop
 
 TBM_FIRSTPIXEL equ  80000000h
 
 .code
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DrawTransparentBitmap
-; Purpose:    Draws a bitmap with transparency on a device context.
+; Purpose:    Draw a bitmap with transparency on a device context.
 ; Arguments:  Arg1: DC HANDLE.
 ;             Arg2: Bitmap HANDLE to draw.
 ;             Arg3; X start position on DC.
@@ -24,7 +23,7 @@ TBM_FIRSTPIXEL equ  80000000h
 ;             Arg5: RGB transparent color. Use TBM_FIRSTPIXEL to indicate that the pixel in the
 ;                   upper left corner contains the transparent color.
 ; Return:     Nothing.
-; Notes:      Original source by microsoft.
+; Notes:      Original source by Microsoft.
 ;             "HOWTO: Drawing Transparent Bitmaps (Q79212)"
 ;             (http://support.microsoft.com/default.aspx?scid=kb;EN-US;q79212)
 ;             Transcribed by Ernest Murphy.
@@ -69,9 +68,9 @@ DrawTransparentBitmap proc hDC:HDC, hBitmap:HBITMAP, xStart:DWORD, yStart:DWORD,
   mov hPrevMemBmp,  $invoke(SelectObject, hMemDC, hAndMemBmp)
   mov hPrevSaveBmp, $invoke(SelectObject, hSaveDC, hSaveBmp)
 
-  ; Set proper mapping mode. Of the DC holding the 'Bitmap'
+  ; Set proper mapping mode of the DC holding the 'Bitmap'
   invoke GetMapMode, hDC
-  invoke SetMapMode, hTempDC, eax 
+  invoke SetMapMode, hTempDC, eax
 
   ; Save the bitmap sent here, because it will be overwritten.
   invoke BitBlt, hSaveDC, 0, 0, PntSize.x, PntSize.y, hTempDC, 0, 0, SRCCOPY
@@ -79,7 +78,7 @@ DrawTransparentBitmap proc hDC:HDC, hBitmap:HBITMAP, xStart:DWORD, yStart:DWORD,
   ; Set the background color of the source DC to the color.
   ; contained in the parts of the bitmap that should be transparent
   .if (cTransparentColor == TBM_FIRSTPIXEL)
-    invoke GetPixel, hTempDC, 0 , 0
+    invoke GetPixel, hTempDC, 0, 0
     mov cTransparentColor, eax
   .endif
   invoke SetBkColor, hTempDC, cTransparentColor

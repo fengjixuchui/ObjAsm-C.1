@@ -9,7 +9,7 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
 
-CStr szApplication, "Application"
+CStr szApplication, "OAC_Application"
 
 Object Application, MySdiAppID, SdiApp
   RedefineMethod    Init
@@ -148,7 +148,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax
@@ -201,7 +201,6 @@ Method Application.OnHelp, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, lParam
   mov xcx, [xax].HELPINFO.hItemHandle
-  DbgHex xcx
   invoke MsgBox, xcx, offset cHlpMsg, offset cAppHlp, MB_OK
 MethodEnd
 

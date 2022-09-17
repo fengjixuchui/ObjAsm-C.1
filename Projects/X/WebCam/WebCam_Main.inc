@@ -8,7 +8,7 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
 
-CStr szAppClassName, "WebCamApp"                        ;Creates szAppClassName string in .const
+CStr szAppClassName, "OAC_WebCamApp"                    ;Creates szAppClassName string in .const
 
 ERROR_BASE = BIT29 + 1000
 AddErrMsg WEBCAM_NO_DEVICE_FOUND, "No WebCam found"
@@ -127,7 +127,7 @@ Method WebCamApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
 
   .elseif ax == IDM_HELP_HELP
-    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm.pdf"), \
+    invoke ExpandEnvironmentStrings, $OfsCStr("%OBJASM_PATH%\Help\ObjAsm_Reference_Volume-I.pdf"), \
                                      addr cBuffer, lengthof(cBuffer)
     invoke PdfView, [xsi].hWnd, addr cBuffer, $OfsCStr("Introduction")
     xor eax, eax
